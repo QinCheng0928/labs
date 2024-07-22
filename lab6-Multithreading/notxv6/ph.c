@@ -16,7 +16,8 @@ struct entry {
 struct entry *table[NBUCKET];
 int keys[NKEYS];
 int nthread = 1;
-pthread_mutex_t lock;
+//pthread_mutex_t lock;
+pthread_mutex_t locks[NBUCKET];
 
 double
 now()
@@ -52,9 +53,11 @@ void put(int key, int value)
     e->value = value;
   } else {
     // the new is new.
-    pthread_mutex_lock(&lock);
+    //pthread_mutex_lock(&lock);
+    pthread_mutex_lock(locks + i); 
     insert(key, value, &table[i], table[i]);
-    pthread_mutex_unlock(&lock);
+    //pthread_mutex_unlock(&lock);
+    pthread_mutex_unlock(locks + i);
   }
 
 }
@@ -65,11 +68,13 @@ get(int key)
   int i = key % NBUCKET;
   struct entry *e = 0;
 
-  pthread_mutex_lock(&lock);
+  //pthread_mutex_lock(&lock);
+  pthread_mutex_lock(locks + i);
   for (e = table[i]; e != 0; e = e->next) {
     if (e->key == key) break;
   }
-  pthread_mutex_unlock(&lock);
+  //pthread_mutex_unlock(&lock);
+  pthread_mutex_unlock(locks + i);
   return e;
 }
 
@@ -106,7 +111,12 @@ main(int argc, char *argv[])
   pthread_t *tha;
   void *value;
   double t1, t0;
-  pthread_mutex_init(&lock, NULL);
+  //pthread_mutex_init(&lock, NULL);
+
+  for (int i = 0; i < NBUCKET; i++) 
+  {
+        pthread_mutex_init(locks + i, NULL);
+  }
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s nthreads\n", argv[0]);

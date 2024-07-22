@@ -21,8 +21,8 @@ balloc: write bitmap block at sector 45
 
 xv6 kernel is booting
 
-hart 2 starting
 hart 1 starting
+hart 2 starting
 init: starting sh
 $ uthread
 thread_a started
@@ -332,4 +332,4 @@ thread_c: exit after 100
 thread_a: exit after 100
 thread_b: exit after 100
 thread_schedule: no runnable threads
-$ qemu-system-riscv64: terminating on signal 15 from pid 23954 (make)
+$ qemu-system-riscv64: terminating on signal 15 from pid 25403 (make)

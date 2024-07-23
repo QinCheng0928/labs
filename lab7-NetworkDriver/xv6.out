@@ -1,0 +1,26 @@
+riscv64-linux-gnu-ld: warning: user/_stressfs has a LOAD segment with RWX permissions
+riscv64-linux-gnu-ld: warning: user/_usertests has a LOAD segment with RWX permissions
+riscv64-linux-gnu-ld: warning: user/_grind has a LOAD segment with RWX permissions
+riscv64-linux-gnu-ld: warning: user/_wc has a LOAD segment with RWX permissions
+riscv64-linux-gnu-ld: warning: user/_zombie has a LOAD segment with RWX permissions
+riscv64-linux-gnu-ld: warning: user/_nettests has a LOAD segment with RWX permissions
+nmeta 46 (boot, super, log blocks 30 inode blocks 13, bitmap blocks 1) blocks 954 total 1000
+balloc: first 567 blocks have been allocated
+balloc: write bitmap block at sector 45
+*** Now run 'gdb' in another window.
+
+xv6 kernel is booting
+
+hart 1 starting
+hart 2 starting
+init: starting sh
+$ nettests
+nettests running on port 26099
+testing ping: OK
+testing single-process pings: OK
+testing multi-process pings: OK
+testing DNS
+DNS arecord for pdos.csail.mit.edu. is 128.52.129.126
+DNS OK
+all tests passed.
+$ qemu-system-riscv64: terminating on signal 15 from pid 31338 (make)

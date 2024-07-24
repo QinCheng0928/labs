@@ -1,7 +1,7 @@
 # labs
 完成xv6 2021版的实验内容
 
-labs1_Utilities添加文件
+labs1_Utilities添加文件,涉及
 sleep.c  pingpong.c  primes.c  find.c xargs.c
 
 labs2_SystemCalls

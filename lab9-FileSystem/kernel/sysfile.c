@@ -308,8 +308,8 @@ sys_open(void)
 
   begin_op();
 
-  // �򿪻��ߴ������û�������·������Ӧ�ļ��� inode����¼�� ip ��
-  //omode ��ʾ���ļ���ģʽ��open mode��
+  // 打开或者创建了用户传进来路径所对应文件的 inode，记录在 ip 中
+  //omode (open mode):指文件打开方式
   if (omode & O_CREATE)
   {
     ip = create(path, T_FILE, 0, 0);
@@ -336,21 +336,21 @@ sys_open(void)
   }
 
 
-
+  //不直接打开软链接本身的文件，递归打开软连接里的路径
   if (!(omode & O_NOFOLLOW))
   {
     int rec_left = 10; // 递归次数限制，软链接可能成环
     struct inode *next_file;
     while (rec_left && ip->type == T_SYMLINK)
     {
-
+      //从 ip 指向的 inode 读取数据，并将其存储到 path 指向的缓冲区中
       if (readi(ip, 0, (uint64)path, 0, MAXPATH) == 0)
       {
         iunlockput(ip);
         end_op();
         return -1;
       }
-
+      //用于将文件路径解析为相应的 inode。它的主要作用是从文件路径中找到并返回对应的 inode
       if ((next_file = namei(path)) == 0)
       {
         // namei 可用从一个路径获得 inode

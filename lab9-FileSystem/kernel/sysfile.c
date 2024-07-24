@@ -308,7 +308,7 @@ sys_open(void)
 
   begin_op();
 
-  // æ‰“å¼€æˆ–è€…åˆ›å»ºäº†ç”¨æˆ·ä¼ è¿›æ¥è·¯å¾„æ‰€å¯¹åº”æ–‡ä»¶çš„ inodeï¼Œè®°å½•åœ¨ ip ä¸­
+  // ´ò¿ª»òÕß´´½¨ÁËÓÃ»§´«½øÀ´Â·¾¶Ëù¶ÔÓ¦ÎÄ¼þµÄ inode£¬¼ÇÂ¼ÔÚ ip ÖÐ
   //omode ±íÊ¾´ò¿ªÎÄ¼þµÄÄ£Ê½£¨open mode£©
   if (omode & O_CREATE)
   {

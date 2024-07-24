@@ -309,6 +309,7 @@ sys_open(void)
   begin_op();
 
   // 打开或者创建了用户传进来路径所对应文件的 inode，记录在 ip 中
+  //omode ��ʾ���ļ���ģʽ��open mode��
   if (omode & O_CREATE)
   {
     ip = create(path, T_FILE, 0, 0);

@@ -495,6 +495,8 @@ uint64 sys_mmap(void) {
     argint(3, &flags) || argfd(4, &fd, &file) || argint(5, &offset)) 
     return -1;
 
+  //这个条件为 true，意味着你试图在只读文件上创建一个可写的共享内存映射，
+  //这是不允许的，因为文件本身是不可写的。
   if(!file->writable && (prot & PROT_WRITE) && flags == MAP_SHARED)
     return -1;
 
@@ -539,6 +541,7 @@ sys_munmap(void)
   }
   if(vma == 0) 
     return 0;
+  //取消映射
   if(vma->addr == addr) {
     vma->addr += length;
     vma->length -= length;

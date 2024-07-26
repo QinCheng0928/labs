@@ -88,6 +88,8 @@ thread_schedule(void)
     next_thread = 0;
 }
 
+
+//这个函数负责创建一个新线程，并将其初始化为可运行状态。
 void 
 thread_create(void (*func)())
 {

@@ -1,0 +1,120 @@
+gcc    -c kernel/entry.o kernel/entry.S
+gcc   -c kernel/start.o kernel/start.c
+gcc   -c kernel/console.o kernel/console.c
+gcc   -c kernel/printf.o kernel/printf.c
+gcc   -c kernel/uart.o kernel/uart.c
+gcc   -c kernel/kalloc.o kernel/kalloc.c
+gcc   -c kernel/spinlock.o kernel/spinlock.c
+gcc   -c kernel/string.o kernel/string.c
+gcc   -c kernel/main.o kernel/main.c
+gcc   -c kernel/vm.o kernel/vm.c
+gcc   -c kernel/proc.o kernel/proc.c
+gcc    -c kernel/swtch.o kernel/swtch.S
+gcc    -c kernel/trampoline.o kernel/trampoline.S
+gcc   -c kernel/trap.o kernel/trap.c
+gcc   -c kernel/syscall.o kernel/syscall.c
+gcc   -c kernel/sysproc.o kernel/sysproc.c
+gcc   -c kernel/bio.o kernel/bio.c
+gcc   -c kernel/fs.o kernel/fs.c
+gcc   -c kernel/log.o kernel/log.c
+gcc   -c kernel/sleeplock.o kernel/sleeplock.c
+gcc   -c kernel/file.o kernel/file.c
+gcc   -c kernel/pipe.o kernel/pipe.c
+gcc   -c kernel/exec.o kernel/exec.c
+gcc   -c kernel/sysfile.o kernel/sysfile.c
+gcc   -c kernel/kernelvec.o kernel/kernelvec.S
+gcc   -c kernel/plic.o kernel/plic.c
+gcc   -c kernel/virtio_disk.o kernel/virtio_disk.c
+gcc -march=rv64g -nostdinc -I. -Ikernel -c user/initcode.S user/initcode.o
+Id -z max-page-size=4096 -N -e start -Ttext 0 user/initcode.out user/initcode.o
+Id: warning: user/initcode.out has a LOAD segment with RWX permissions
+riscv64-linux-gnu-objcopy -S binary user/initcode.out user/initcode
+objdump -S user/initcode.o > user/initcode.asm
+Id -z max-page-size=4096 -T kernel/kernel.ld kernel/kernel kernel/entry.o kernel/start.o kernel/console.o kernel/printf.o kernel/uart.o kernel/kalloc.o kernel/spinlock.o kernel/string.o kernel/main.o kernel/vm.o kernel/proc.o kernel/swtch.o kernel/trampoline.o kernel/trap.o kernel/syscall.o kernel/sysproc.o kernel/bio.o kernel/fs.o kernel/log.o kernel/sleeplock.o kernel/file.o kernel/pipe.o kernel/exec.o kernel/sysfile.o kernel/kernelvec.o kernel/plic.o kernel/virtio_disk.o 
+Id: warning: kernel/kernel has a LOAD segment with RWX permissions
+objdump -S kernel/kernel > kernel/kernel.asm
+objdump -t kernel/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > kernel/kernel.sym
+gcc -Werror -Wall -I. mkfs/mkfs mkfs/mkfs.c
+gcc   -c user/ulib.o user/ulib.c
+perl user/usys.pl > user/usys.S
+gcc   -c user/usys.o user/usys.S
+gcc   -c user/printf.o user/printf.c
+gcc   -c user/umalloc.o user/umalloc.c
+gcc   -c user/cat.o user/cat.c
+Id -z max-page-size=4096 -T user/user.ld user/_cat user/cat.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_cat > user/cat.asm
+objdump -t user/_cat | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/cat.sym
+gcc   -c user/echo.o user/echo.c
+Id -z max-page-size=4096 -T user/user.ld user/_echo user/echo.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_echo > user/echo.asm
+objdump -t user/_echo | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/echo.sym
+gcc   -c user/forktest.o user/forktest.c
+# forktest has less library code linked in - needs to be small
+# in order to be able to max out the proc table.
+Id -z max-page-size=4096 -N -e main -Ttext 0 user/_forktest user/forktest.o user/ulib.o user/usys.o
+Id: warning: user/_forktest has a LOAD segment with RWX permissions
+objdump -S user/_forktest > user/forktest.asm
+gcc   -c user/grep.o user/grep.c
+Id -z max-page-size=4096 -T user/user.ld user/_grep user/grep.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_grep > user/grep.asm
+objdump -t user/_grep | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/grep.sym
+gcc   -c user/init.o user/init.c
+Id -z max-page-size=4096 -T user/user.ld user/_init user/init.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_init > user/init.asm
+objdump -t user/_init | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/init.sym
+gcc   -c user/kill.o user/kill.c
+Id -z max-page-size=4096 -T user/user.ld user/_kill user/kill.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_kill > user/kill.asm
+objdump -t user/_kill | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/kill.sym
+gcc   -c user/ln.o user/ln.c
+Id -z max-page-size=4096 -T user/user.ld user/_ln user/ln.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_ln > user/ln.asm
+objdump -t user/_ln | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/ln.sym
+gcc   -c user/ls.o user/ls.c
+Id -z max-page-size=4096 -T user/user.ld user/_ls user/ls.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_ls > user/ls.asm
+objdump -t user/_ls | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/ls.sym
+gcc   -c user/mkdir.o user/mkdir.c
+Id -z max-page-size=4096 -T user/user.ld user/_mkdir user/mkdir.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_mkdir > user/mkdir.asm
+objdump -t user/_mkdir | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/mkdir.sym
+gcc   -c user/rm.o user/rm.c
+Id -z max-page-size=4096 -T user/user.ld user/_rm user/rm.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_rm > user/rm.asm
+objdump -t user/_rm | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/rm.sym
+gcc   -c user/sh.o user/sh.c
+Id -z max-page-size=4096 -T user/user.ld user/_sh user/sh.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_sh > user/sh.asm
+objdump -t user/_sh | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/sh.sym
+gcc   -c user/stressfs.o user/stressfs.c
+Id -z max-page-size=4096 -T user/user.ld user/_stressfs user/stressfs.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_stressfs > user/stressfs.asm
+objdump -t user/_stressfs | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/stressfs.sym
+gcc   -c user/usertests.o user/usertests.c
+Id -z max-page-size=4096 -T user/user.ld user/_usertests user/usertests.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_usertests > user/usertests.asm
+objdump -t user/_usertests | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/usertests.sym
+gcc   -c user/grind.o user/grind.c
+Id -z max-page-size=4096 -T user/user.ld user/_grind user/grind.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_grind > user/grind.asm
+objdump -t user/_grind | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/grind.sym
+gcc   -c user/wc.o user/wc.c
+Id -z max-page-size=4096 -T user/user.ld user/_wc user/wc.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_wc > user/wc.asm
+objdump -t user/_wc | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/wc.sym
+gcc   -c user/zombie.o user/zombie.c
+Id -z max-page-size=4096 -T user/user.ld user/_zombie user/zombie.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+objdump -S user/_zombie > user/zombie.asm
+objdump -t user/_zombie | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > user/zombie.sym
+mkfs/mkfs fs.img README user/_cat user/_echo user/_forktest user/_grep user/_init user/_kill user/_ln user/_ls user/_mkdir user/_rm user/_sh user/_stressfs user/_usertests user/_grind user/_wc user/_zombie 
+nmeta 46 (boot, super, log blocks 30 inode blocks 13, bitmap blocks 1) blocks 1954 total 2000
+balloc: first 767 blocks have been allocated
+balloc: write bitmap block at sector 45
+qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -global virtio-mmio.force-legacy=false -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+
+xv6 kernel is booting
+
+hart 1 starting
+hart 2 starting
+init: starting sh
+$ 

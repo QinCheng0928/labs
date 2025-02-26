@@ -7,6 +7,11 @@
 #include "fs.h"
 
 /*
+kvm：kernel virtual memory
+uvm：user virtual memory
+*/ 
+
+/*
  * the kernel's page table.
  */
 pagetable_t kernel_pagetable;
@@ -275,6 +280,7 @@ uvmdealloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz)
 
 // Recursively free page-table pages.
 // All leaf mappings must already have been removed.
+// 释放页表
 void
 freewalk(pagetable_t pagetable)
 {
